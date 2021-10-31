@@ -38,7 +38,7 @@ Created by: Aaron Reamer
 
 ### Spawner Mods
 
-​	These add extra behaviors to a spawner. To apply a mod to a spawner you simply need to add a node2D as a child to the spawner and attach a spawner mod script to that node.
+​	These add extra behaviors to a spawner. To apply a mod to a spawner you simply need to add a node2D as a child to the spawner and attach a spawner mod script to that node. These mods will also affect child spawners.
 
 ### Bullet Properties
 

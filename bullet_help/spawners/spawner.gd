@@ -58,13 +58,14 @@ func fire():
 		take_spawner_shot(bullet)
 
 # Generates pistols in a spread, pistols will inherent export bools
-# theta: the total rangeo of the spread in degrees
+# theta: the total rangeo of the spread in degrees (assumes <= 360 degrees)
 # num_shots: total number of shots, minimum 2
 # center: the center of the spread in degrees
 # Doesn't pass on spawner preservation values to children
 func spread(theta: float = 0, num_shots: int = 2, center: float = 0):
-	var step_size = theta / (num_shots - 1)
-	var rot_start = center - theta / 2 # start rotation
+	var wedge:bool = theta < 360 # Different cases for wedge and circle spread
+	var step_size:float = theta / (num_shots - int(wedge))
+	var rot_start:float = center - theta / 2 # start rotation
 	
 	# Step through rotation
 	for i in range(0, num_shots):
@@ -75,13 +76,14 @@ func spread(theta: float = 0, num_shots: int = 2, center: float = 0):
 
 # Fires bullets in a spread when called for a single shot
 # bullet_scene: resource of bullet to be instanced and fired
-# theta: the total rangeo of the spread in degrees
+# theta: the total rangeo of the spread in degrees (assumes <= 360 degrees)
 # num_shots: total number of shots, minimum 2
 # center: the center of the spread in degrees
 # Doesn't pass on spawner preservation values to children
 func spread_one_shot(bullet_scene: PackedScene, theta: float, num_shots: int = 2, center: float = 0):
-	var step_size := theta / (num_shots - 1)
-	var rot_start := center - theta / 2 # start rotation
+	var wedge:bool = theta < 360 # Different cases for wedge and circle spread
+	var step_size:float = theta / (num_shots - int(wedge))
+	var rot_start:float = center - theta / 2 # start rotation
 	
 	# Step through rotation
 	for i in range(0, num_shots):
