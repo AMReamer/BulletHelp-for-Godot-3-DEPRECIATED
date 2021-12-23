@@ -6,8 +6,10 @@ extends Node2D
 export (bool) var at_position := true # Ensures to spawn at the current position, irrelevent if global_coords is true
 export (bool) var along_rotation := true # Ensures the bullet is fired along rotation, irrelevent if global_coords is true
 export (bool) var spawn_global := true # Determines if bullets are spawned at the global level, global if on, local if off
-export (bool) var inherit_exports := true # Inherits position export values from parent when entering the tree. Does not inherit self_fire.
 export (PackedScene) var bullet: PackedScene # Bullet scene to fire
+# Below will not work if changed at runtime
+export (bool) var inherit_exports := true # Inherits position export values from parent when entering the tree. Does not inherit self_fire.
+export (bool) var inherit_parent_mods := true # Determines if spawner_mods should come from parent
 
 var self_fire := true # Determines if this spawner will allow itself to fire bullets
 var spawner_mods := [] # Holds the child spawner mods
@@ -35,7 +37,7 @@ func _enter_tree():
 		spawn_global = parent.spawn_global
 	
 	# Uses same list of spawner mods as parent
-	if "spawner_mods" in parent:
+	if "spawner_mods" in parent && inherit_parent_mods:
 		spawner_mods = parent.spawner_mods
 	
 	# Add self to spawner_list
