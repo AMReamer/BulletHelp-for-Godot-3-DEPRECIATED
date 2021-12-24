@@ -7,6 +7,7 @@ export (bool) var at_position := true # Ensures to spawn at the current position
 export (bool) var along_rotation := true # Ensures the bullet is fired along rotation, irrelevent if global_coords is true
 export (bool) var spawn_global := true # Determines if bullets are spawned at the global level, global if on, local if off
 export (PackedScene) var bullet: PackedScene # Bullet scene to fire
+export (bool) var use_passed_bullet := true # Use the bullet that's passed into it from parent instead of own bullet
 # Below will not work if changed at runtime
 export (bool) var inherit_exports := true # Inherits position export values from parent when entering the tree. Does not inherit self_fire.
 export (bool) var inherit_parent_mods := true # Determines if spawner_mods should come from parent
@@ -30,11 +31,16 @@ func _enter_tree():
 	# Get top spawner parent spawner mod
 	var parent = get_parent()
 	
-	# Inherit parent position exports
-	if inherit_exports && "at_position" in parent && "along_rotation" in parent && "spawn_global" in parent:
+	# Inherit parent position exports. 
+	# Does not include inheriting parent mods.
+	# 	This is because that is the most common exception to this use, especial in auto generated children.
+	# Easiest way to check paretn is a spawner without cyclical reference
+	if inherit_exports && "_spawner" in parent:
 		at_position = parent.at_position
 		along_rotation = parent.along_rotation
 		spawn_global = parent.spawn_global
+		bullet = parent.bullet
+		use_passed_bullet = parent.use_passed_bullet
 	
 	# Uses same list of spawner mods as parent
 	if "spawner_mods" in parent && inherit_parent_mods:
@@ -63,7 +69,8 @@ func fire():
 # theta: the total rangeo of the spread in degrees (assumes <= 360 degrees)
 # num_shots: total number of shots, minimum 2
 # center: the center of the spread in degrees
-# Doesn't pass on spawner preservation values to children
+# Important to note that the resulting childen always inherit exports.
+# 	This allows the resulting childrent to behave as an extension of the spawner
 func spread(theta: float = 0, num_shots: int = 2, center: float = 0):
 	var wedge:bool = theta < 360 # Different cases for wedge and circle spread
 	var step_size:float = theta / (num_shots - int(wedge))
@@ -103,7 +110,10 @@ func shoot_spread(theta: float, num_shots: int = 2, center: float = 0):
 
 # Handles calling all child spawners using this bullet
 func take_spawner_shot(shot_scene: PackedScene):
-	shoot(shot_scene)
+	if (use_passed_bullet):
+		shoot(shot_scene)
+	else:
+		shoot(bullet)
 	
 	for child in spawner_list:
 		child.take_spawner_shot(shot_scene)
