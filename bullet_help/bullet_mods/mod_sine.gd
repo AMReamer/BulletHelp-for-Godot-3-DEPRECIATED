@@ -21,7 +21,9 @@ func _ready():
 
 
 func move(delta):
-	phase += delta - period * float(phase >= period) # Last part keeps phase tightly bound
+	phase += delta
+	phase = fmod(phase, period) # Keeps phase tightly bound
+	
 	var current_value: float = calc_wave()
 	# Adds by change in function position
 	update_value(current_value - last_value) 
