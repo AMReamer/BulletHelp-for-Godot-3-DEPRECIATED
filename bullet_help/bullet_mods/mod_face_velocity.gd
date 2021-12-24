@@ -1,4 +1,4 @@
-# Keeps the bullet roated towards the direction it's moving
+# Keeps the bullet roated towards the direction of its velocity
 class_name ModFaceVelocity
 extends BulletMod
 
